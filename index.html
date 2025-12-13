@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Member melden</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #2c2f33;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #23272a;
+            padding: 25px;
+            border-radius: 8px;
+            width: 320px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        input {
+            background: #2c2f33;
+            color: white;
+        }
+        button {
+            background: #5865f2;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #4752c4;
+        }
+        .success {
+            color: #43b581;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🚨 Member melden</h2>
+
+    <input type="text" id="reporter" placeholder="Dein Name" required>
+    <input type="text" id="reported" placeholder="Name der gemeldeten Person" required>
+
+    <button onclick="sendReport()">Meldung senden</button>
+
+    <div id="msg" class="success"></div>
+</div>
+
+<script>
+const webhookURL = "https://discordapp.com/api/webhooks/1449424755303256064/sii4NPupcoL9-b6G6gkf8oLJ0S9eIr474CrQRAvtDdq4vqTnjmCG1Jj0QE4zZG0fN545";
+
+function sendReport() {
+    const reporter = document.getElementById("reporter").value.trim();
+    const reported = document.getElementById("reported").value.trim();
+
+    if (!reporter || !reported) {
+        alert("Bitte alle Felder ausfüllen!");
+        return;
+    }
+
+    const payload = {
+        content:
+            "🚨 **Neue Member-Meldung** 🚨\n\n" +
+            "**Gemeldet von:** " + reporter + "\n" +
+            "**Gemeldete Person:** " + reported + "\n\n" +
+            "👍 = **Bannen**\n" +
+            "👎 = **Nicht bannen**"
+    };
+
+    fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(() => {
+        document.getElementById("msg").innerText = "✅ Meldung erfolgreich gesendet!";
+        document.getElementById("reporter").value = "";
+        document.getElementById("reported").value = "";
+    })
+    .catch(() => {
+        alert("Fehler beim Senden der Meldung.");
+    });
+}
+</script>
+
+</body>
+</html>
