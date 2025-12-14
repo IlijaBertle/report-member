@@ -1,63 +1,106 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <title>Member melden</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #2c2f33;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background: #23272a;
-            padding: 25px;
-            border-radius: 8px;
-            width: 320px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.4);
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        input, button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            border: none;
-        }
-        input {
-            background: #2c2f33;
-            color: white;
-        }
-        button {
-            background: #5865f2;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #4752c4;
-        }
-        .success {
-            color: #43b581;
-            text-align: center;
-            margin-top: 10px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member melden</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #2c2f33;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 15px;
+}
+
+.container {
+    background: #23272a;
+    padding: 25px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+input, select, textarea, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: none;
+    font-size: 16px;
+}
+
+input, select, textarea {
+    background: #2c2f33;
+    color: #fff;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+button {
+    background: #5865f2;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+button:hover {
+    background: #4752c4;
+}
+
+.success {
+    color: #43b581;
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+small {
+    color: #b9bbbe;
+    display: block;
+    margin-top: 5px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
     <h2>🚨 Member melden</h2>
 
-    <input type="text" id="reporter" placeholder="Dein Name" required>
-    <input type="text" id="reported" placeholder="Name der gemeldeten Person" required>
+    <input type="text" id="reporter" placeholder="Dein Name">
+
+    <input type="text" id="reported" placeholder="Name der gemeldeten Person">
+
+    <select id="reason">
+        <option value="">Grund auswählen</option>
+        <option value="Beleidigung">Beleidigung</option>
+        <option value="Spam">Spam</option>
+        <option value="Hacking / Cheats">Hacking / Cheats</option>
+        <option value="Regelbruch">Regelbruch</option>
+        <option value="Sonstiges">Sonstiges</option>
+    </select>
+
+    <textarea id="details" placeholder="Beschreibung (optional)"></textarea>
+    <small>Je genauer, desto besser für die Moderation.</small>
 
     <button onclick="sendReport()">Meldung senden</button>
 
@@ -65,24 +108,42 @@
 </div>
 
 <script>
-const webhookURL = "https://discordapp.com/api/webhooks/1449424755303256064/sii4NPupcoL9-b6G6gkf8oLJ0S9eIr474CrQRAvtDdq4vqTnjmCG1Jj0QE4zZG0fN545";
+const webhookURL = "HIER_DEIN_WEBHOOK"; // ⚠️ besser über Backend lösen!
+const cooldownTime = 30000; // 30 Sekunden
+let lastSend = 0;
 
 function sendReport() {
+    const now = Date.now();
+    if (now - lastSend < cooldownTime) {
+        alert("⏳ Bitte warte kurz, bevor du erneut meldest.");
+        return;
+    }
+
     const reporter = document.getElementById("reporter").value.trim();
     const reported = document.getElementById("reported").value.trim();
+    const reason = document.getElementById("reason").value;
+    const details = document.getElementById("details").value.trim();
 
-    if (!reporter || !reported) {
-        alert("Bitte alle Felder ausfüllen!");
+    if (!reporter || !reported || !reason) {
+        alert("Bitte alle Pflichtfelder ausfüllen!");
         return;
     }
 
     const payload = {
-        content:
-            "🚨 **Neue Member-Meldung** 🚨\n\n" +
-            "**Gemeldet von:** " + reporter + "\n" +
-            "**Gemeldete Person:** " + reported + "\n\n" +
-            "👍 = **Bannen**\n" +
-            "👎 = **Nicht bannen**"
+        embeds: [{
+            title: "🚨 Neue Member-Meldung",
+            color: 15158332,
+            fields: [
+                { name: "👤 Gemeldet von", value: reporter, inline: true },
+                { name: "🚫 Gemeldete Person", value: reported, inline: true },
+                { name: "📌 Grund", value: reason },
+                { name: "📝 Beschreibung", value: details || "Keine Angabe" }
+            ],
+            footer: {
+                text: "Reagiere mit 👍 oder 👎 zur Entscheidung"
+            },
+            timestamp: new Date()
+        }]
     };
 
     fetch(webhookURL, {
@@ -92,11 +153,12 @@ function sendReport() {
     })
     .then(() => {
         document.getElementById("msg").innerText = "✅ Meldung erfolgreich gesendet!";
-        document.getElementById("reporter").value = "";
-        document.getElementById("reported").value = "";
+        document.querySelectorAll("input, textarea").forEach(e => e.value = "");
+        document.getElementById("reason").value = "";
+        lastSend = now;
     })
     .catch(() => {
-        alert("Fehler beim Senden der Meldung.");
+        alert("❌ Fehler beim Senden der Meldung.");
     });
 }
 </script>
