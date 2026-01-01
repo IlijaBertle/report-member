@@ -3,164 +3,209 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Member melden</title>
+
+<title>Party-Bubble Penzberg | Announcements</title>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎈</text></svg>">
 
 <style>
+:root {
+  --bg: #0e0e14;
+  --card: #1b1b2a;
+  --accent: #ff2fb3;
+  --accent-soft: #ff78d2;
+  --text: #f5f5f7;
+  --muted: #a0a0b8;
+}
+
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background: #2c2f33;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 15px;
+  margin: 0;
+  background: radial-gradient(circle at top, #1d1d30, var(--bg));
+  color: var(--text);
+  min-height: 100vh;
 }
 
-.container {
-    background: #23272a;
-    padding: 25px;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 380px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+header {
+  padding: 3rem 1.5rem;
+  text-align: center;
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
+header h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin: 0;
+  letter-spacing: 0.04em;
 }
 
-input, select, textarea, button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border-radius: 6px;
-    border: none;
-    font-size: 16px;
+header p {
+  color: var(--muted);
+  margin-top: 0.6rem;
 }
 
-input, select, textarea {
-    background: #2c2f33;
-    color: #fff;
+main {
+  max-width: 900px;
+  margin: auto;
+  padding: 1rem;
+  display: grid;
+  gap: 1.5rem;
 }
 
-textarea {
-    resize: vertical;
-    min-height: 80px;
+.card {
+  background: linear-gradient(145deg, #232338, var(--card));
+  border-radius: 1.2rem;
+  padding: 1.5rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+  position: relative;
+  overflow: hidden;
 }
 
-button {
-    background: #5865f2;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 15px;
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(255,47,179,0.25), transparent 60%);
+  pointer-events: none;
 }
 
-button:hover {
-    background: #4752c4;
+.card h2 {
+  margin: 0 0 0.5rem 0;
 }
 
-.success {
-    color: #43b581;
-    text-align: center;
-    margin-top: 15px;
-    font-weight: bold;
+.meta {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 0.8rem;
 }
 
-small {
-    color: #b9bbbe;
-    display: block;
-    margin-top: 5px;
+.badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  color: #000;
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  margin-right: 0.4rem;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+footer a {
+  color: var(--accent-soft);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+.rss-box {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.rss-box a {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  color: #000;
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 10px 25px rgba(255,47,179,0.4);
+}
+
+.rss-box a:hover {
+  transform: translateY(-2px);
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h2>🚨 Member melden</h2>
+<header>
+  <h1>🎈 Party-Bubble Penzberg</h1>
+  <p>Offizielle Ankündigungen & Events</p>
+</header>
 
-    <input type="text" id="reporter" placeholder="Dein Name">
+<main id="announcements"></main>
 
-    <input type="text" id="reported" placeholder="Name der gemeldeten Person">
-
-    <select id="reason">
-        <option value="">Grund auswählen</option>
-        <option value="Beleidigung">Beleidigung</option>
-        <option value="Spam">Spam</option>
-        <option value="Hacking / Cheats">Hacking / Cheats</option>
-        <option value="Regelbruch">Regelbruch</option>
-        <option value="Sonstiges">Sonstiges</option>
-    </select>
-
-    <textarea id="details" placeholder="Beschreibung (optional)"></textarea>
-    <small>Je genauer, desto besser für die Moderation.</small>
-
-    <button onclick="sendReport()">Meldung senden</button>
-
-    <div id="msg" class="success"></div>
+<div class="rss-box">
+  <a id="rssLink" href="#" download="party-bubble-penzberg.xml">
+    📡 RSS-Feed abonnieren
+  </a>
 </div>
 
+<footer>
+  Party-Bubble Penzberg · Made with Beats & Bubbles  
+</footer>
+
 <script>
-const webhookURL = "https://discord.com/api/webhooks/1449424755303256064/sii4NPupcoL9-b6G6gkf8oLJ0S9eIr474CrQRAvtDdq4vqTnjmCG1Jj0QE4zZG0fN545"; // ⚠️ besser über Backend lösen!
-const cooldownTime = 30000; // 30 Sekunden
-let lastSend = 0;
+const announcements = [
+  {
+    title: "Bubble Night – DJ Special",
+    description: "Fette Beats, Neon-Lights und eiskalte Drinks. Dresscode: Glow!",
+    date: "2026-01-12T22:00:00",
+    link: "https://party-bubble-penzberg.de/bubble-night"
+  },
+  {
+    title: "Weekend Warm-Up",
+    description: "Freitag eskalieren, Samstag erinnern, Sonntag bereuen.",
+    date: "2026-01-18T21:30:00",
+    link: "https://party-bubble-penzberg.de/weekend-warmup"
+  }
+];
 
-function sendReport() {
-    const now = Date.now();
-    if (now - lastSend < cooldownTime) {
-        alert("⏳ Bitte warte kurz, bevor du erneut meldest.");
-        return;
-    }
+// Render cards
+const container = document.getElementById("announcements");
 
-    const reporter = document.getElementById("reporter").value.trim();
-    const reported = document.getElementById("reported").value.trim();
-    const reason = document.getElementById("reason").value;
-    const details = document.getElementById("details").value.trim();
+announcements.forEach(a => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <span class="badge">EVENT</span>
+    <h2>${a.title}</h2>
+    <div class="meta">${new Date(a.date).toLocaleString("de-DE")}</div>
+    <p>${a.description}</p>
+  `;
+  container.appendChild(card);
+});
 
-    if (!reporter || !reported || !reason) {
-        alert("Bitte alle Pflichtfelder ausfüllen!");
-        return;
-    }
+// Generate RSS
+let rss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>Party-Bubble Penzberg Announcements</title>
+<link>https://party-bubble-penzberg.de</link>
+<description>Alle Party-Bubble Events & News</description>
+<language>de-de</language>`;
 
-    const payload = {
-        embeds: [{
-            title: "🚨 Neue Member-Meldung",
-            color: 15158332,
-            fields: [
-                { name: "👤 Gemeldet von", value: reporter, inline: true },
-                { name: "🚫 Gemeldete Person", value: reported, inline: true },
-                { name: "📌 Grund", value: reason },
-                { name: "📝 Beschreibung", value: details || "Keine Angabe" }
-            ],
-            footer: {
-                text: "Reagiere mit 👍 oder 👎 zur Entscheidung"
-            },
-            timestamp: new Date()
-        }]
-    };
+announcements.forEach(a => {
+  rss += `
+<item>
+<title>${a.title}</title>
+<link>${a.link}</link>
+<description>${a.description}</description>
+<pubDate>${new Date(a.date).toUTCString()}</pubDate>
+<guid>${a.link}</guid>
+</item>`;
+});
 
-    fetch(webhookURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    })
-    .then(() => {
-        document.getElementById("msg").innerText = "✅ Meldung erfolgreich gesendet!";
-        document.querySelectorAll("input, textarea").forEach(e => e.value = "");
-        document.getElementById("reason").value = "";
-        lastSend = now;
-    })
-    .catch(() => {
-        alert("❌ Fehler beim Senden der Meldung.");
-    });
-}
+rss += `
+</channel>
+</rss>`;
+
+const blob = new Blob([rss], { type: "application/rss+xml" });
+document.getElementById("rssLink").href = URL.createObjectURL(blob);
 </script>
 
 </body>
